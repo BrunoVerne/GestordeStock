@@ -1,6 +1,7 @@
 package Spring.FX.services;
 
 import Spring.FX.domain.Producto;
+import Spring.FX.domain.Usuario;
 import Spring.FX.exception.ProductoNotFoundException;
 import Spring.FX.repositories.ProductoRepository;
 import org.springframework.stereotype.Service;
@@ -35,30 +36,45 @@ public class ProductoServiceImplDB implements ProductoService{
 
     @Override
     public Producto createProducto(Producto producto) {
-        Optional<Producto> oProducto = productoRepository.findById(producto. getCodigo());
+        Optional<Producto> oProducto = productoRepository.findByNombre(producto.getNombre());
         if(oProducto.isPresent()){
             throw new RuntimeException("no flaco el producto ya existe");
         }
+        producto.setCodigo(null);
         this.productoRepository.save(producto);
         return producto;
     }
 
     @Override
-    public Producto actualizarProducto(Long id, Producto productoActualizado) {
+    public Producto actualizarProducto(Integer id, Producto productoActualizado) {
         Producto productoExistente = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductoNotFoundException("Producto no encontrado con ID: " + id));
+        productoExistente.setNombre(productoActualizado.getNombre());
+        productoExistente.setPrecio(productoActualizado.getPrecio());
+        productoExistente.setCantidad(productoActualizado.getCantidad());
 
-        // Actualiza solo los campos que vienen en productoActualizado
-        if (productoActualizado.getNombre() != null) {
-            productoExistente.setNombre(productoActualizado.getNombre());
-        }
-        if (productoActualizado.getPrecio() > 0) { // Validación básica
-            productoExistente.setPrecio(productoActualizado.getPrecio());
-        }
-        if (productoActualizado.getCantidad() >= 0) { // Validación básica
-            productoExistente.setCantidad(productoActualizado.getCantidad());
-        }
 
         return productoRepository.save(productoExistente);
     }
+
+    @Override
+    public Producto findById(Integer id){
+        return productoRepository.findById(id)
+                .orElseThrow(() -> new ProductoNotFoundException("Producto no encontrado con ID: " + id));
+    }
+
+    @Override
+    public Producto borrarProducto(Integer id){
+        Producto productoExistente = productoRepository.findById(id)
+                .orElseThrow(() -> new ProductoNotFoundException("Producto no encontrado con ID: " + id));
+        this.productoRepository.delete(productoExistente);
+        return productoExistente;
+    }
+
+    @Override
+    public Optional<List<Producto>> findByUsuarioId(Integer usuarioId) {
+        return productoRepository.findByUsuarioId(usuarioId);
+    }
+
+
 }

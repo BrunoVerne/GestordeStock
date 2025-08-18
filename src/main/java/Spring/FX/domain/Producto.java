@@ -6,20 +6,31 @@ import lombok.*;
 
 @Entity
 @Table(name = "productos")
-@AllArgsConstructor
-@Getter
-@NoArgsConstructor
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private long codigo;
+    private Integer codigo;
     @Column(nullable = false)
     private float precio;
     @Column(nullable = false)
     private int cantidad;
     @Column(nullable = false)
     private String nombre;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false)
+    private Usuario usuario;
+
+    public Producto() {
+    }
+
+    public Producto(Usuario usuario, float precio, int cantidad, String nombre) {
+        this.usuario = usuario;
+        setPrecio(precio);
+        setCantidad(cantidad);
+        setNombre(nombre);
+    }
+
 
 
 
@@ -46,5 +57,31 @@ public class Producto {
         this.cantidad = cantidad;
     }
 
+    public void setCodigo(Integer codigo) {
+        this.codigo = codigo;
+    }
 
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Integer getCodigo() {  // Cambiado de long a Integer
+        return codigo;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public float getPrecio() {
+        return precio;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
 }

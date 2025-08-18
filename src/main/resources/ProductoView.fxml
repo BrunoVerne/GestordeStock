@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="Spring.FX.controllers.ProductoController">
+
+    <top>
+        <HBox alignment="CENTER" style="-fx-padding: 10;">
+            <Label text="Gestión de Productos" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="10" style="-fx-padding: 10;">
+            <TableView fx:id="productosTable">
+                <columns>
+                    <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+                    <TableColumn fx:id="colNombre" text="Nombre" prefWidth="200"/>
+                    <TableColumn fx:id="colPrecio" text="Precio" prefWidth="100"/>
+                    <TableColumn fx:id="colCantidad" text="Cantidad" prefWidth="100"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Nuevo" onAction="#nuevoProducto" style="-fx-font-weight: bold;"/>
+                <Button text="Editar" onAction="#editarProducto" style="-fx-font-weight: bold;"/>
+                <Button text="Eliminar" onAction="#eliminarProducto" style="-fx-font-weight: bold; -fx-text-fill: red;"/>
+            </HBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <Label fx:id="mensajeLabel" style="-fx-text-fill: blue; -fx-padding: 10;"/>
+    </bottom>
+</BorderPane>
