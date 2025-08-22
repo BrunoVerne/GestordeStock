@@ -17,7 +17,7 @@ public class Producto {
     private int cantidad;
     @Column(nullable = false)
     private String nombre;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false)
     private Usuario usuario;
 
@@ -50,7 +50,7 @@ public class Producto {
     }
 
     public void setCantidad(int cantidad){
-        if(this.cantidad < 0){
+        if(cantidad < 0){
             throw new RuntimeException("La cantidad no puede ser menor a 0");
 
         }
@@ -83,5 +83,16 @@ public class Producto {
 
     public String getNombre() {
         return nombre;
+    }
+
+    @Override
+    public String toString() {
+        return "Producto{" +
+                "codigo=" + codigo +
+                ", nombre='" + nombre + '\'' +
+                ", precio=" + precio +
+                ", cantidad=" + cantidad +
+                ", usuario=" + (usuario != null ? "ID:" + usuario.getCodigo() : "null") +
+                '}';
     }
 }

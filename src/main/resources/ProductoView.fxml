@@ -18,7 +18,6 @@
         <VBox spacing="10" style="-fx-padding: 10;">
             <TableView fx:id="productosTable">
                 <columns>
-                    <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
                     <TableColumn fx:id="colNombre" text="Nombre" prefWidth="200"/>
                     <TableColumn fx:id="colPrecio" text="Precio" prefWidth="100"/>
                     <TableColumn fx:id="colCantidad" text="Cantidad" prefWidth="100"/>

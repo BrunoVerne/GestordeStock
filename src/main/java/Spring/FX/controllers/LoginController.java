@@ -16,12 +16,12 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class LoginController {
-    // Componentes de la vista
+
+    // SOLO ESTOS CAMPOS (los que están en LoginView.fxml)
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
 
-    // Dependencias
     @Autowired
     private UsuarioService usuarioService;
 
@@ -32,18 +32,33 @@ public class LoginController {
             String email = emailField.getText().trim();
             String password = passwordField.getText().trim();
 
-            // 1. Autenticar usuario
             if (usuarioService.autenticar(email, password)) {
-                // 2. Obtener usuario completo
                 Usuario usuario = usuarioService.findByMail(email)
                         .orElseThrow(() -> new Exception("Usuario no encontrado"));
 
-                // 3. Cargar vista principal
                 cargarVistaProductos(usuario);
+                cerrarVentanaActual();
             }
         } catch (Exception e) {
             mostrarError(e.getMessage());
             limpiarCampoContrasenia();
+        }
+    }
+
+    @FXML
+    private void handleRegister() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/RegisterView.fxml"));
+            loader.setControllerFactory(ControlDelNegocioApplication.getSpringContext()::getBean);
+            Parent root = loader.load();
+
+            Stage stage = (Stage) emailField.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Registro de Usuario");
+
+        } catch (Exception e) {
+            mostrarError("No se pudo cargar la vista de registro: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -60,30 +75,22 @@ public class LoginController {
             Parent root = loader.load();
 
             ProductoController productoController = loader.getController();
-            productoController.setUsuario(usuario);  // ahora sí se pasa
+            productoController.setUsuario(usuario);
 
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
+            stage.setTitle("Sistema de Gestión");
             stage.show();
 
         } catch (Exception e) {
+            mostrarError("Error al cargar la vista principal: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-
-    @FXML
-    private void handleRegister() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/RegisterView.fxml"));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) emailField.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Registro de Usuario");
-        } catch (Exception e) {
-            mostrarError("No se pudo cargar la vista de registro");
-        }
+    private void cerrarVentanaActual() {
+        Stage stage = (Stage) emailField.getScene().getWindow();
+        stage.close();
     }
 
     private void mostrarError(String mensaje) {
@@ -94,5 +101,10 @@ public class LoginController {
     private void limpiarCampoContrasenia() {
         passwordField.clear();
         passwordField.requestFocus();
+    }
+
+    @FXML
+    private void initialize() {
+        errorLabel.setText("");
     }
 }

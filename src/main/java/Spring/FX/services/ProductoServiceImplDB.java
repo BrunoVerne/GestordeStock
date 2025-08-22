@@ -20,7 +20,10 @@ public class ProductoServiceImplDB implements ProductoService{
 
     @Override
     public List<Producto> getAllProductos() {
-        return productoRepository.findAll();
+        System.out.println("DEBUG: Obteniendo todos los productos");
+        List<Producto> productos = productoRepository.findAll();
+        System.out.println("DEBUG: Total de productos en BD: " + productos.size());
+        return productos;
     }
 
     @Override
@@ -36,13 +39,30 @@ public class ProductoServiceImplDB implements ProductoService{
 
     @Override
     public Producto createProducto(Producto producto) {
-        Optional<Producto> oProducto = productoRepository.findByNombre(producto.getNombre());
-        if(oProducto.isPresent()){
-            throw new RuntimeException("no flaco el producto ya existe");
+        // Verificar que el producto tenga usuario asociado
+        if (producto.getUsuario() == null) {
+            throw new RuntimeException("El producto debe tener un usuario asociado");
         }
+
+        System.out.println("DEBUG: Creando producto - Nombre: " + producto.getNombre() + 
+                          ", Precio: " + producto.getPrecio() + 
+                          ", Cantidad: " + producto.getCantidad() + 
+                          ", Usuario ID: " + producto.getUsuario().getCodigo());
+
+        // Verificar nombre único por usuario (opcional)
+        Optional<Producto> oProducto = productoRepository.findByNombreAndUsuarioId(
+                producto.getNombre(), producto.getUsuario().getCodigo());
+
+        if (oProducto.isPresent()) {
+            throw new RuntimeException("Ya existe un producto con ese nombre para este usuario");
+        }
+
         producto.setCodigo(null);
-        this.productoRepository.save(producto);
-        return producto;
+        System.out.println("DEBUG: Antes de guardar - Producto: " + producto);
+        Producto productoGuardado = productoRepository.save(producto);
+        System.out.println("DEBUG: Producto guardado con ID: " + productoGuardado.getCodigo());
+        System.out.println("DEBUG: Producto guardado completo: " + productoGuardado);
+        return productoGuardado;
     }
 
     @Override
@@ -73,7 +93,20 @@ public class ProductoServiceImplDB implements ProductoService{
 
     @Override
     public Optional<List<Producto>> findByUsuarioId(Integer usuarioId) {
-        return productoRepository.findByUsuarioId(usuarioId);
+        System.out.println("DEBUG: Buscando productos para usuario ID: " + usuarioId);
+        Optional<List<Producto>> resultado = productoRepository.findByUsuarioId(usuarioId);
+        if (resultado.isPresent()) {
+            System.out.println("DEBUG: Encontrados " + resultado.get().size() + " productos");
+            resultado.get().forEach(p -> System.out.println("DEBUG: Producto encontrado: " + p));
+        } else {
+            System.out.println("DEBUG: No se encontraron productos");
+        }
+        return resultado;
+    }
+
+    @Override
+    public Optional<Producto> findByNombreAndUsuarioId(String nombre, int codigo) {
+        return productoRepository.findByNombreAndUsuarioId(nombre, codigo);
     }
 
 

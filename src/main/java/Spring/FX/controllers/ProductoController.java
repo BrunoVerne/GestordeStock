@@ -1,5 +1,6 @@
 package Spring.FX.controllers;
 
+import Spring.FX.ControlDelNegocioApplication;
 import Spring.FX.domain.Producto;
 import Spring.FX.domain.Usuario;
 import Spring.FX.services.ProductoService;
@@ -10,16 +11,18 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import java.util.List;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class ProductoController {
     @FXML private TableView<Producto> productosTable;
-    @FXML private TableColumn<Producto, Integer> colId;
+
     @FXML private TableColumn<Producto, String> colNombre;
-    @FXML private TableColumn<Producto, Double> colPrecio;
+    @FXML private TableColumn<Producto, Float> colPrecio;
     @FXML private TableColumn<Producto, Integer> colCantidad;
     @FXML private Label mensajeLabel;
 
@@ -35,7 +38,6 @@ public class ProductoController {
     }
 
     private void configurarColumnas() {
-        colId.setCellValueFactory(new PropertyValueFactory<>("codigo"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
@@ -43,7 +45,7 @@ public class ProductoController {
         // Formatear precio como moneda
         colPrecio.setCellFactory(tc -> new TableCell<>() {
             @Override
-            protected void updateItem(Double precio, boolean empty) {
+            protected void updateItem(Float precio, boolean empty) {
                 super.updateItem(precio, empty);
                 if (empty || precio == null) {
                     setText(null);
@@ -71,14 +73,18 @@ public class ProductoController {
                 throw new IllegalStateException("Usuario no está autenticado");
             }
 
+            System.out.println("DEBUG: Cargando productos para usuario ID: " + usuario.getCodigo());
+
             // El servicio devuelve un Optional<List<Producto>>
             Optional<List<Producto>> productosOpt = productoService.findByUsuarioId(usuario.getCodigo());
 
             if (productosOpt.isPresent()) {
                 List<Producto> productos = productosOpt.get();
+                System.out.println("DEBUG: Encontrados " + productos.size() + " productos");
                 productosTable.setItems(FXCollections.observableArrayList(productos));
                 mensajeLabel.setText("Cargados " + productos.size() + " productos");
             } else {
+                System.out.println("DEBUG: No se encontraron productos");
                 productosTable.setItems(FXCollections.observableArrayList()); // lista vacía
                 mensajeLabel.setText("No se encontraron productos para este usuario");
             }
@@ -90,14 +96,14 @@ public class ProductoController {
     }
 
     @FXML
-    private void nuevoProducto() {
+    private void nuevoProducto() throws IOException {
         Producto nuevoProducto = new Producto();
-        nuevoProducto.setUsuario(usuario); // Establece el usuario asociado
+        nuevoProducto.setUsuario(usuario);
         mostrarDialogoProducto(nuevoProducto);
     }
 
     @FXML
-    private void editarProducto() {
+    private void editarProducto() throws IOException {
         Producto seleccionado = productosTable.getSelectionModel().getSelectedItem();
         if (seleccionado != null) {
             mostrarDialogoProducto(seleccionado);
@@ -124,36 +130,67 @@ public class ProductoController {
         }
     }
 
-    private void mostrarDialogoProducto(Producto producto) {
+    @FXML
+    private void probarConexion() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProductoDialogo.fxml"));
-            DialogPane dialogPane = loader.load();
+            System.out.println("DEBUG: Probando conexión a la base de datos...");
+            List<Producto> todosLosProductos = productoService.getAllProductos();
+            System.out.println("DEBUG: Total de productos en toda la BD: " + todosLosProductos.size());
+            mostrarMensaje("Conexión exitosa. Total productos: " + todosLosProductos.size());
+        } catch (Exception e) {
+            System.out.println("DEBUG: Error en conexión: " + e.getMessage());
+            e.printStackTrace();
+            mostrarError("Error de conexión: " + e.getMessage());
+        }
+    }
 
-            ProductoDialogoController controller = loader.getController();
-            controller.setProducto(producto);
-            controller.setUsuario(usuario);
+    private void mostrarDialogoProducto(Producto producto) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProductoDialogo.fxml"));
+        loader.setControllerFactory(ControlDelNegocioApplication.getSpringContext()::getBean);
+        DialogPane dialogPane = loader.load();
 
-            Dialog<ButtonType> dialog = new Dialog<>();
-            dialog.setDialogPane(dialogPane);
-            dialog.setTitle(producto.getCodigo() == null ? "Nuevo Producto" : "Editar Producto");
+        ProductoDialogoController controller = loader.getController();
+        controller.setProducto(producto);
+        controller.setUsuario(usuario);
 
-            Optional<ButtonType> result = dialog.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                Producto productoGuardado = controller.getProducto();
-                if (producto.getCodigo() == null) {
-                    productoService.createProducto(productoGuardado);
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setDialogPane(dialogPane);
+        dialog.setTitle(producto.getCodigo() == null ? "Nuevo Producto" : "Editar Producto");
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
+            System.out.println("=== USUARIO PRESIONÓ GUARDAR ===");
+
+            if (!controller.validarCampos()) {
+                System.out.println("=== VALIDACIÓN FALLÓ ===");
+                mostrarError("Hay errores en los campos. Corrígelos antes de continuar.");
+                return;
+            }
+
+            System.out.println("=== VALIDACIÓN EXITOSA, OBTENIENDO PRODUCTO ===");
+            Producto productoDesdeDialogo = controller.getProductoFromFields();
+            System.out.println("=== PRODUCTO OBTENIDO: " + productoDesdeDialogo + " ===");
+
+            try {
+                if (controller.isNuevoProducto()) {
+                    System.out.println("=== CREANDO NUEVO PRODUCTO ===");
+                    productoService.createProducto(productoDesdeDialogo);
+                    System.out.println("=== PRODUCTO CREADO EXITOSAMENTE ===");
                     mostrarMensaje("Producto creado correctamente");
                 } else {
-                    productoService.actualizarProducto(productoGuardado.getCodigo(), productoGuardado);
+                    System.out.println("=== ACTUALIZANDO PRODUCTO EXISTENTE ===");
+                    productoService.actualizarProducto(productoDesdeDialogo.getCodigo(), productoDesdeDialogo);
+                    System.out.println("=== PRODUCTO ACTUALIZADO EXITOSAMENTE ===");
                     mostrarMensaje("Producto actualizado correctamente");
                 }
                 cargarProductos();
+            } catch (Exception e) {
+                System.out.println("=== ERROR AL GUARDAR: " + e.getMessage() + " ===");
+                mostrarError("Error al guardar producto: " + e.getMessage());
             }
-        } catch (Exception e) {
-            mostrarError("Error al abrir diálogo: " + e.getMessage());
-            e.printStackTrace();
         }
+
     }
+
 
     private boolean confirmarEliminacion() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
