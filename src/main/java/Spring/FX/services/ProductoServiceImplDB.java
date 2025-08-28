@@ -49,11 +49,9 @@ public class ProductoServiceImplDB implements ProductoService{
                           ", Cantidad: " + producto.getCantidad() + 
                           ", Usuario ID: " + producto.getUsuario().getCodigo());
 
-        // Verificar nombre único por usuario (opcional)
-        Optional<Producto> oProducto = productoRepository.findByNombreAndUsuarioId(
-                producto.getNombre(), producto.getUsuario().getCodigo());
+        Optional<List<Producto>> oProducto = productoRepository.findByUsuarioId(producto.getUsuario().getCodigo());
 
-        if (oProducto.isPresent()) {
+        if (oProducto.isPresent() && !oProducto.get().isEmpty()) {
             throw new RuntimeException("Ya existe un producto con ese nombre para este usuario");
         }
 
@@ -104,10 +102,7 @@ public class ProductoServiceImplDB implements ProductoService{
         return resultado;
     }
 
-    @Override
-    public Optional<Producto> findByNombreAndUsuarioId(String nombre, int codigo) {
-        return productoRepository.findByNombreAndUsuarioId(nombre, codigo);
-    }
+
 
 
 }

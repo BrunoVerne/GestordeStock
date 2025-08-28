@@ -16,5 +16,5 @@ public interface ProductoService {
     Producto findById(Integer id);
     Producto borrarProducto(Integer id);
     Optional<List<Producto>> findByUsuarioId(Integer usuarioId);
-    Optional<Producto> findByNombreAndUsuarioId(String nombre, int codigo);
+
 }
