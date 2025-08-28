@@ -69,7 +69,7 @@ public class ProductoDialogoController {
         }
 
         producto.setUsuario(usuario);
-        System.out.println("DEBUG: Usuario asignado - ID: " + (usuario != null ? usuario.getCodigo() : "null"));
+        System.out.println("DEBUG: Usuario asignado - ID: " + (usuario != null ? usuario.getId() : "null"));
 
         return this.producto;
     }

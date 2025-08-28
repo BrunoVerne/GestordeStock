@@ -2,6 +2,7 @@ package Spring.FX.services;
 
 import Spring.FX.domain.Producto;
 import Spring.FX.domain.Usuario;
+import Spring.FX.exception.ProductoExistException;
 import Spring.FX.exception.ProductoNotFoundException;
 import Spring.FX.repositories.ProductoRepository;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,7 @@ public class ProductoServiceImplDB implements ProductoService{
 
     @Override
     public List<Producto> getAllProductos() {
-        System.out.println("DEBUG: Obteniendo todos los productos");
         List<Producto> productos = productoRepository.findAll();
-        System.out.println("DEBUG: Total de productos en BD: " + productos.size());
         return productos;
     }
 
@@ -40,27 +39,21 @@ public class ProductoServiceImplDB implements ProductoService{
     @Override
     public Producto createProducto(Producto producto) {
         // Verificar que el producto tenga usuario asociado
-        if (producto.getUsuario() == null) {
-            throw new RuntimeException("El producto debe tener un usuario asociado");
+        if (producto.getUsuario() == null || producto.getUsuario().getId() == null) {
+            throw new RuntimeException("El producto debe tener un usuario asociado válido");
         }
 
-        System.out.println("DEBUG: Creando producto - Nombre: " + producto.getNombre() + 
-                          ", Precio: " + producto.getPrecio() + 
-                          ", Cantidad: " + producto.getCantidad() + 
-                          ", Usuario ID: " + producto.getUsuario().getCodigo());
+        // Verificar si ya existe un producto con el mismo nombre para este usuario
+        boolean productoExistente = productoRepository
+                .existsByNombreAndUsuarioId(producto.getNombre(), producto.getUsuario().getId());
 
-        Optional<List<Producto>> oProducto = productoRepository.findByUsuarioId(producto.getUsuario().getCodigo());
-
-        if (oProducto.isPresent() && !oProducto.get().isEmpty()) {
-            throw new RuntimeException("Ya existe un producto con ese nombre para este usuario");
+        if (productoExistente) {
+            throw new ProductoExistException("Ya existe un producto con el nombre '" + producto.getNombre() + "' para este usuario");
         }
 
+        // Asegurar que sea una creación (no actualización)
         producto.setCodigo(null);
-        System.out.println("DEBUG: Antes de guardar - Producto: " + producto);
-        Producto productoGuardado = productoRepository.save(producto);
-        System.out.println("DEBUG: Producto guardado con ID: " + productoGuardado.getCodigo());
-        System.out.println("DEBUG: Producto guardado completo: " + productoGuardado);
-        return productoGuardado;
+        return productoRepository.save(producto);
     }
 
     @Override
@@ -91,15 +84,9 @@ public class ProductoServiceImplDB implements ProductoService{
 
     @Override
     public Optional<List<Producto>> findByUsuarioId(Integer usuarioId) {
-        System.out.println("DEBUG: Buscando productos para usuario ID: " + usuarioId);
-        Optional<List<Producto>> resultado = productoRepository.findByUsuarioId(usuarioId);
-        if (resultado.isPresent()) {
-            System.out.println("DEBUG: Encontrados " + resultado.get().size() + " productos");
-            resultado.get().forEach(p -> System.out.println("DEBUG: Producto encontrado: " + p));
-        } else {
-            System.out.println("DEBUG: No se encontraron productos");
-        }
-        return resultado;
+        return productoRepository.findByUsuarioId(usuarioId);
+
+
     }
 
 

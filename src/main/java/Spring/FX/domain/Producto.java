@@ -3,6 +3,9 @@ package Spring.FX.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Table(name = "productos")
@@ -20,6 +23,8 @@ public class Producto {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false)
     private Usuario usuario;
+    @ManyToMany(mappedBy = "productos")
+    private List<Venta> ventas = new ArrayList<>();
 
     public Producto() {
     }
@@ -92,7 +97,15 @@ public class Producto {
                 ", nombre='" + nombre + '\'' +
                 ", precio=" + precio +
                 ", cantidad=" + cantidad +
-                ", usuario=" + (usuario != null ? "ID:" + usuario.getCodigo() : "null") +
+                ", usuario=" + (usuario != null ? "ID:" + usuario.getId() : "null") +
                 '}';
+    }
+
+    public List<Venta> getVentas() {
+        return ventas;
+    }
+
+    public void setVentas(List<Venta> ventas) {
+        this.ventas = ventas;
     }
 }

@@ -24,9 +24,6 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Venta> ventas = new ArrayList<>();
 
-    public Integer getCodigo() {
-        return id;
-    }
 
     public Usuario() {
     }
@@ -61,6 +58,10 @@ public class Usuario {
 
     public void setContrasenia(String contrasenia) {
         this.contrasenia = contrasenia;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public void setId(Integer id) {

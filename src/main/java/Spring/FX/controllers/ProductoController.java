@@ -58,7 +58,7 @@ public class ProductoController {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
-        this.usuarioId = usuario.getCodigo();
+        this.usuarioId = usuario.getId();
         cargarProductos();
     }
 
@@ -73,10 +73,10 @@ public class ProductoController {
                 throw new IllegalStateException("Usuario no está autenticado");
             }
 
-            System.out.println("DEBUG: Cargando productos para usuario ID: " + usuario.getCodigo());
+            System.out.println("DEBUG: Cargando productos para usuario ID: " + usuario.getId());
 
             // El servicio devuelve un Optional<List<Producto>>
-            Optional<List<Producto>> productosOpt = productoService.findByUsuarioId(usuario.getCodigo());
+            Optional<List<Producto>> productosOpt = productoService.findByUsuarioId(usuario.getId());
 
             if (productosOpt.isPresent()) {
                 List<Producto> productos = productosOpt.get();

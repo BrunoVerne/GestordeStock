@@ -6,7 +6,10 @@ import Spring.FX.repositories.VentaRepository;
 
 import java.util.List;
 import java.util.Optional;
+import Spring.FX.exception.VentaNotFounException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class VentaServiceImplDB implements VentaService{
     private final VentaRepository ventaRepository;
 
@@ -15,35 +18,45 @@ public class VentaServiceImplDB implements VentaService{
     }
 
 
-
+    @Override
+    public Venta findById(Integer id) {
+        return ventaRepository.findById(id)
+                .orElseThrow(() -> new VentaNotFounException("venta no encontrada"));
+    }
 
     @Override
-    public Venta getVenta() {
+    public List<Venta> getAllVentas() {
+        return ventaRepository.findAll();
+    }
+
+    @Override
+    public Venta modificarVenta(Integer id, Venta ventaActualizada) {
         return null;
     }
 
+
     @Override
-    public List<Venta> getVentas() {
-        return List.of();
+    public Venta borrarVenta(Integer id) {
+         Venta existente = ventaRepository.findById(id)
+                 .orElseThrow(() -> new VentaNotFounException("Venta no encontrada"));
+        this.ventaRepository.delete(existente);
+        return existente;
     }
 
     @Override
-    public Venta modificarVenta() {
-        return null;
+    public Venta createVenta(Venta venta) {
+        if(venta.getUsuario() == null) {
+            throw new RuntimeException("El producto debe tener un usuario asociado");
+        }
+        venta.setId(null);
+
+        return ventaRepository.save(venta);
     }
 
     @Override
-    public Venta borrarVenta() {
-        return null;
-    }
+    public Optional<List<Venta>> findByUsuarioId(Integer usuarioId) {
+        return ventaRepository.findByUsuarioId(usuarioId);
 
-    @Override
-    public Venta createVenta() {
-        return null;
-    }
 
-    @Override
-    public Optional<List<Producto>> findByUsuarioId(Integer usuarioId) {
-        return Optional.empty();
     }
 }
