@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="Spring.FX.controllers.VentasController">
+
+    <top>
+        <HBox alignment="CENTER" style="-fx-padding: 10;">
+            <Label text="Gestión de Ventas" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="10" style="-fx-padding: 10;">
+            <TableView fx:id="ventasTable">
+                <columns>
+                    <TableColumn fx:id="colFecha" text="Fecha" prefWidth="150"/>
+                    <TableColumn fx:id="colMonto" text="Monto" prefWidth="100"/>
+                    <TableColumn fx:id="colCantidadProductos" text="Cant. Productos" prefWidth="120"/>
+                    <TableColumn fx:id="colUsuario" text="Usuario" prefWidth="150"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Nueva Venta" onAction="#nuevaVenta" style="-fx-font-weight: bold;"/>
+                <Button text="Gestionar Stock" onAction="#gestionarStock" style="-fx-font-weight: bold; -fx-text-fill: green;"/>
+            </HBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <Label fx:id="mensajeLabel" style="-fx-text-fill: blue; -fx-padding: 10;"/>
+    </bottom>
+</BorderPane>

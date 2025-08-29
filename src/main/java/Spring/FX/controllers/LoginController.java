@@ -36,7 +36,7 @@ public class LoginController {
                 Usuario usuario = usuarioService.findByMail(email)
                         .orElseThrow(() -> new Exception("Usuario no encontrado"));
 
-                cargarVistaProductos(usuario);
+                cargarVistaVentas(usuario);  // ← CAMBIADO: Ahora carga ventas en lugar de productos
                 cerrarVentanaActual();
             }
         } catch (Exception e) {
@@ -68,22 +68,22 @@ public class LoginController {
         }
     }
 
-    private void cargarVistaProductos(Usuario usuario) {
+    private void cargarVistaVentas(Usuario usuario) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProductoView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/VentasView.fxml"));
             loader.setControllerFactory(ControlDelNegocioApplication.getSpringContext()::getBean);
             Parent root = loader.load();
 
-            ProductoController productoController = loader.getController();
-            productoController.setUsuario(usuario);
+            VentasController ventasController = loader.getController();
+            ventasController.setUsuario(usuario);
 
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
-            stage.setTitle("Sistema de Gestión");
+            stage.setTitle("Sistema de Gestión - Ventas");
             stage.show();
 
         } catch (Exception e) {
-            mostrarError("Error al cargar la vista principal: " + e.getMessage());
+            mostrarError("Error al cargar la vista de ventas: " + e.getMessage());
             e.printStackTrace();
         }
     }

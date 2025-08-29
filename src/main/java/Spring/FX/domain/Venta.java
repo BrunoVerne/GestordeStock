@@ -71,6 +71,21 @@ public class Venta {
     public void setProductos(List<Producto> productos) {
         this.productos = productos;
     }
+
+    public Double getMontoTotal() {
+        if (productos == null) return 0.0;
+        return productos.stream()
+                .mapToDouble(p -> p.getPrecio() * p.getCantidad())
+                .sum();
+    }
+
+    public Integer getCantidadProductos() {
+        return productos != null ? productos.size() : 0;
+    }
+
+    public String getNombreUsuario() {
+        return usuario != null ? usuario.getNombre() : "N/A";
+    }
 }
 
 
