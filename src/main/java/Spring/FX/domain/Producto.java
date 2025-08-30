@@ -92,13 +92,7 @@ public class Producto {
 
     @Override
     public String toString() {
-        return "Producto{" +
-                "codigo=" + codigo +
-                ", nombre='" + nombre + '\'' +
-                ", precio=" + precio +
-                ", cantidad=" + cantidad +
-                ", usuario=" + (usuario != null ? "ID:" + usuario.getId() : "null") +
-                '}';
+        return nombre + " - $" + precio;
     }
 
     public List<Venta> getVentas() {

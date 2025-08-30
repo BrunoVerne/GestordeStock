@@ -46,25 +46,20 @@ public class ProductoDialogoController {
         String precioStr = precioField.getText().trim();
         String cantidadStr = cantidadField.getText().trim();
 
-        System.out.println("DEBUG: Valores del formulario - Nombre: '" + nombre + "', Precio: '" + precioStr + "', Cantidad: '" + cantidadStr + "'");
 
         producto.setNombre(nombre);
 
         try {
             float precio = Float.parseFloat(precioStr);
             producto.setPrecio(precio);
-            System.out.println("DEBUG: Precio parseado: " + precio);
         } catch (NumberFormatException e) {
-            System.out.println("DEBUG: Error parseando precio: " + e.getMessage());
             producto.setPrecio(0.0f);
         }
 
         try {
             int cantidad = Integer.parseInt(cantidadStr);
             producto.setCantidad(cantidad);
-            System.out.println("DEBUG: Cantidad parseada: " + cantidad);
         } catch (NumberFormatException e) {
-            System.out.println("DEBUG: Error parseando cantidad: " + e.getMessage());
             producto.setCantidad(0);
         }
 
