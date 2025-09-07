@@ -16,6 +16,5 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
 
     @Query("SELECT p FROM Producto p WHERE p.usuario.id = :usuarioId")
     Optional<List<Producto>>  findByUsuarioId(@Param("usuarioId") Integer usuarioId);
-
     boolean existsByNombreAndUsuarioId(String nombre, Integer usuarioId);
 }

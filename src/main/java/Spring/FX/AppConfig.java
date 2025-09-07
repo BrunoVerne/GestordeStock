@@ -1,11 +1,10 @@
 package Spring.FX;
 import Spring.FX.controllers.*;
+import Spring.FX.domain.VentaProducto;
 import Spring.FX.repositories.ProductoRepository;
 import Spring.FX.repositories.UsuarioRepository;
-import Spring.FX.services.ProductoService;
-import Spring.FX.services.ProductoServiceImplDB;
-import Spring.FX.services.UsuarioService;
-import Spring.FX.services.UsuarioServiceImplDB;
+import Spring.FX.repositories.VentaProductoRepository;
+import Spring.FX.services.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -26,5 +25,10 @@ public class AppConfig {
     @Bean
     public ProductoService productoService(ProductoRepository productoRepository) {
         return new ProductoServiceImplDB(productoRepository);
+    }
+
+    @Bean
+    public VentaProductoService VentaProducto(VentaProductoRepository ventaProductoRepository){
+        return new VentaProductoServiceImplDB(ventaProductoRepository);
     }
 }

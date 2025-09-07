@@ -100,6 +100,6 @@ public class ProductoDialogoController {
     }
 
     public boolean isNuevoProducto() {
-        return producto == null || producto.getCodigo() == null;
+        return producto == null || producto.getId() == null;
     }
 }

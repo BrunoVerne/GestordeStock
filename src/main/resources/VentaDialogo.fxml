@@ -22,6 +22,9 @@
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <Label text="Seleccionar Producto:"/>
                 <ComboBox fx:id="productoComboBox" prefWidth="200"/>
+                <!-- ✅ AÑADIR EL SPINNER FALTANTE -->
+                <Label text="Cantidad:"/>
+                <Spinner fx:id="cantidadSpinner" prefWidth="80"/>
                 <Button fx:id="agregarButton" text="Agregar" onAction="#agregarProducto"/>
             </HBox>
 

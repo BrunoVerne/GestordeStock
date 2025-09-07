@@ -13,9 +13,9 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Controller
 public class VentaDialogoController {
@@ -34,6 +34,8 @@ public class VentaDialogoController {
     private Button crearVentaButton;
     @FXML
     private Button cancelarButton;
+    @FXML
+    private Spinner<Integer> cantidadSpinner;
 
     @Autowired
     private VentaService ventaService;
@@ -43,7 +45,9 @@ public class VentaDialogoController {
 
     private Usuario usuario;
     private Stage dialogStage;
+
     private final ObservableList<Producto> productosSeleccionados = FXCollections.observableArrayList();
+    private final Map<Producto, Integer> cantidadesSeleccionadas = new HashMap<>();
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
@@ -51,30 +55,44 @@ public class VentaDialogoController {
 
     public void setDialogStage(Stage dialogStage) {
         this.dialogStage = dialogStage;
-
         productosSeleccionados.clear();
         productoComboBox.getSelectionModel().clearSelection();
         totalLabel.setText("Total: $0.00");
 
-        // Opcional: agregar listener para limpiar cuando se cierra la ventana
         dialogStage.setOnShown(event -> {
             productosSeleccionados.clear();
+            cantidadesSeleccionadas.clear();
             actualizarTotal();
         });
     }
 
     @FXML
     private void initialize() {
-        configurarControles();
+        configurarListView();
         cargarProductos();
+        configurarCantidadSpinner();
     }
 
-    private void configurarControles() {
+    private void configurarListView() {
         productosListView.setItems(productosSeleccionados);
-
-        productosSeleccionados.addListener((javafx.collections.ListChangeListener.Change<? extends Producto> change) -> {
-            actualizarTotal();
+        productosListView.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(Producto item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    int cantidad = cantidadesSeleccionadas.getOrDefault(item, 1);
+                    setText(item.getNombre() + " x" + cantidad + " - $" + (item.getPrecio() * cantidad));
+                }
+            }
         });
+    }
+
+    private void configurarCantidadSpinner() {
+        SpinnerValueFactory<Integer> valueFactory =
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1);
+        cantidadSpinner.setValueFactory(valueFactory);
     }
 
     private void cargarProductos() {
@@ -90,7 +108,13 @@ public class VentaDialogoController {
     private void agregarProducto() {
         Producto producto = productoComboBox.getSelectionModel().getSelectedItem();
         if (producto != null) {
-            productosSeleccionados.add(producto);
+            int cantidad = cantidadSpinner.getValue();
+            cantidadesSeleccionadas.merge(producto, cantidad, Integer::sum);
+            if (!productosSeleccionados.contains(producto)) {
+                productosSeleccionados.add(producto);
+            }
+            productosListView.refresh();
+            actualizarTotal();
         }
     }
 
@@ -99,12 +123,14 @@ public class VentaDialogoController {
         Producto producto = productosListView.getSelectionModel().getSelectedItem();
         if (producto != null) {
             productosSeleccionados.remove(producto);
+            cantidadesSeleccionadas.remove(producto);
+            actualizarTotal();
         }
     }
 
     private void actualizarTotal() {
-        double total = productosSeleccionados.stream()
-                .mapToDouble(Producto::getPrecio)
+        double total = cantidadesSeleccionadas.entrySet().stream()
+                .mapToDouble(e -> e.getKey().getPrecio() * e.getValue())
                 .sum();
         totalLabel.setText(String.format("Total: $%.2f", total));
     }
@@ -112,13 +138,40 @@ public class VentaDialogoController {
     @FXML
     private void crearVenta() {
         try {
-            Venta venta = new Venta(usuario, new ArrayList<>(productosSeleccionados));
+            if (productosSeleccionados.isEmpty()) {
+                mostrarError("Debe seleccionar al menos un producto");
+                return;
+            }
+
+            Venta venta = new Venta(usuario);
+
+            for (Producto producto : productosSeleccionados) {
+                int cantidadVendida = cantidadesSeleccionadas.get(producto);
+
+                // Agregar producto a la venta
+                venta.agregarProducto(producto, cantidadVendida);
+
+                // Actualizar stock
+                int nuevaCantidad = producto.getCantidad() - cantidadVendida;
+                if (nuevaCantidad < 0) {
+                    throw new RuntimeException("Cantidad insuficiente para: " + producto.getNombre());
+                }
+                producto.setCantidad(nuevaCantidad);
+                productoService.actualizarProducto(producto.getId(), producto);
+            }
+
             ventaService.createVenta(venta);
+
+            // Limpiar
+            productosSeleccionados.clear();
+            cantidadesSeleccionadas.clear();
             dialogStage.close();
+
         } catch (Exception e) {
             mostrarError("Error al crear venta: " + e.getMessage());
         }
     }
+
 
     @FXML
     private void cancelar() {

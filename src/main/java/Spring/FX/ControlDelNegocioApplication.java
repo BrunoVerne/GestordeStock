@@ -5,27 +5,39 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "Spring.FX")
 public class ControlDelNegocioApplication extends Application {
 
+    // Contexto de Spring que se asignará desde el launcher
     private static ConfigurableApplicationContext springContext;
+
     private Parent root;
 
-    public static void main(String[] args) {
-        launch(args);
+    // Setter para asignar el contexto desde el launcher
+    public static void setSpringContext(ConfigurableApplicationContext context) {
+        springContext = new SpringApplicationBuilder(ControlDelNegocioApplication.class)
+                .web(WebApplicationType.NONE) // ⚡ Esto indica que no es web
+                .run();
     }
 
+    // Getter para usarlo en los controllers
     public static ConfigurableApplicationContext getSpringContext() {
         return springContext;
     }
 
     @Override
     public void init() throws Exception {
-        springContext = SpringApplication.run(ControlDelNegocioApplication.class);
+        if (springContext == null) {
+            springContext = new SpringApplicationBuilder(ControlDelNegocioApplication.class)
+                    .web(WebApplicationType.NONE) // no arranca web server
+                    .run();
+        }
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/LoginView.fxml"));
         loader.setControllerFactory(springContext::getBean);
         root = loader.load();
@@ -41,6 +53,7 @@ public class ControlDelNegocioApplication extends Application {
 
     @Override
     public void stop() {
-        springContext.close();
+        // Cerrar Spring context al cerrar la app
+        if (springContext != null) springContext.close();
     }
 }

@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -86,7 +87,7 @@ public class ProductoController {
         Producto seleccionado = productosTable.getSelectionModel().getSelectedItem();
         if (seleccionado != null) {
             try {
-                productoService.borrarProducto(seleccionado.getCodigo());
+                productoService.borrarProducto(seleccionado.getId());
                 cargarProductos();
                 mensajeLabel.setText("Producto eliminado");
             } catch (Exception e) {
@@ -104,24 +105,33 @@ public class ProductoController {
 
         ProductoDialogoController controller = loader.getController();
         controller.setProducto(producto);
+        controller.setUsuario(usuario);
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setDialogPane(dialogPane);
-        dialog.setTitle(producto.getCodigo() == null ? "Nuevo Producto" : "Editar Producto");
+        dialog.setTitle(producto.getId() == null ? "Nuevo Producto" : "Editar Producto");
+
+        // ✅ CONVERTIR EL DIÁLOGO A MODAL PARA QUE showAndWait() FUNCIONE MEJOR
+        dialog.initModality(Modality.APPLICATION_MODAL);
 
         Optional<ButtonType> result = dialog.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            Producto productoActualizado = controller.getProductoFromFields();
-            productoActualizado.setUsuario(usuario);
+        if (result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE) {
+            try {
+                Producto productoActualizado = controller.getProductoFromFields();
+                productoActualizado.setUsuario(usuario);
 
-            if (producto.getCodigo() == null) {
-                productoService.createProducto(productoActualizado);
-                mensajeLabel.setText("Producto creado");
-            } else {
-                productoService.actualizarProducto(producto.getCodigo(), productoActualizado);
-                mensajeLabel.setText("Producto actualizado");
+                if (producto.getId() == null) {
+                    productoService.createProducto(productoActualizado);
+                    mensajeLabel.setText("Producto creado");
+                } else {
+                    productoService.actualizarProducto(producto.getId(), productoActualizado);
+                    mensajeLabel.setText("Producto actualizado");
+                }
+                cargarProductos();
+            } catch (Exception e) {
+                mensajeLabel.setText("Error: " + e.getMessage());
+                mostrarDialogoProducto(producto);
             }
-            cargarProductos();
         }
     }
 

@@ -65,10 +65,9 @@ public class VentasController {
     @FXML
     private void nuevaVenta() {
         try {
-            // Cargar el diálogo de nueva venta CON Spring
+            // USAR LA MISMA FORMA QUE EN PRODUCTOCONTROLLER
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/VentaDialogo.fxml"));
-            loader.setControllerFactory(ControlDelNegocioApplication.getSpringContext()::getBean); // ← ESTA LÍNEA ES CLAVE
-
+            loader.setControllerFactory(ControlDelNegocioApplication.getSpringContext()::getBean);
             Parent root = loader.load();
 
             VentaDialogoController controller = loader.getController();
@@ -88,6 +87,7 @@ public class VentasController {
 
         } catch (Exception e) {
             mensajeLabel.setText("Error al abrir diálogo de venta: " + e.getMessage());
+            e.printStackTrace(); // Para debug
         }
     }
 

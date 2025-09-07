@@ -1,7 +1,6 @@
 package Spring.FX.services;
 
 import Spring.FX.domain.Producto;
-import Spring.FX.domain.Usuario;
 import Spring.FX.exception.ProductoExistException;
 import Spring.FX.exception.ProductoNotFoundException;
 import Spring.FX.repositories.ProductoRepository;
@@ -52,7 +51,7 @@ public class ProductoServiceImplDB implements ProductoService{
         }
 
         // Asegurar que sea una creación (no actualización)
-        producto.setCodigo(null);
+        producto.setId(null);
         return productoRepository.save(producto);
     }
 

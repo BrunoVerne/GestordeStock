@@ -46,3 +46,7 @@ openjfx-*/
 # Archivos temporales
 *.log
 *.tmp
+
+#archivos mios
+faltantes.txt
+
