@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="Spring.FX.controllers.VentaDetallesController"
+      spacing="10" style="-fx-padding: 15;">
+
+    <HBox spacing="10">
+        <Label text="Detalles de Venta" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <Label fx:id="lblId" style="-fx-font-size: 18px; -fx-text-fill: blue;"/>
+    </HBox>
+
+    <GridPane hgap="10" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints prefWidth="100"/>
+            <ColumnConstraints prefWidth="200"/>
+        </columnConstraints>
+
+        <Label text="Fecha:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <Label fx:id="lblFecha" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <Label text="Usuario:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <Label fx:id="lblUsuario" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="Total:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <Label fx:id="lblTotal" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label text="Total Productos:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <Label fx:id="lblTotalProductos" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <Label text="Productos vendidos:" style="-fx-font-weight: bold;"/>
+
+    <TableView fx:id="tableProductos" prefHeight="200">
+        <columns>
+            <TableColumn fx:id="colProducto" text="Producto" prefWidth="200"/>
+            <TableColumn fx:id="colCantidad" text="Cantidad"/>
+            <TableColumn fx:id="colPrecioUnitario" text="Precio Unitario" prefWidth="100"/>
+            <TableColumn fx:id="colSubtotal" text="Subtotal" prefWidth="100"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Cerrar" onAction="#handleCerrar"/>
+    </HBox>
+</VBox>
