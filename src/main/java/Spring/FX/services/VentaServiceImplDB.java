@@ -1,6 +1,5 @@
 package Spring.FX.services;
 
-import Spring.FX.domain.Producto;
 import Spring.FX.domain.Venta;
 import Spring.FX.repositories.VentaRepository;
 
@@ -44,13 +43,12 @@ public class VentaServiceImplDB implements VentaService{
     }
 
     @Override
-    public Venta createVenta(Venta venta) {
-        if(venta.getUsuario() == null) {
+    public void createVenta(Venta venta) {
+        if (venta.getUsuario() == null) {
             throw new RuntimeException("El producto debe tener un usuario asociado");
         }
         venta.setId(null);
-
-        return ventaRepository.save(venta);
+        ventaRepository.save(venta);
     }
 
     @Override

@@ -5,55 +5,73 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import lombok.Getter;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-@SpringBootApplication(scanBasePackages = "Spring.FX")
+import java.util.Objects;
+
+@SpringBootApplication
 public class ControlDelNegocioApplication extends Application {
 
-    // Contexto de Spring que se asignará desde el launcher
+    @Getter
     private static ConfigurableApplicationContext springContext;
+    private static Scene mainScene;
 
-    private Parent root;
-
-    // Setter para asignar el contexto desde el launcher
-    public static void setSpringContext(ConfigurableApplicationContext context) {
+    @Override
+    public void init() {
         springContext = new SpringApplicationBuilder(ControlDelNegocioApplication.class)
-                .web(WebApplicationType.NONE) // ⚡ Esto indica que no es web
+                .headless(false)
+                .web(WebApplicationType.NONE)
                 .run();
     }
 
-    // Getter para usarlo en los controllers
-    public static ConfigurableApplicationContext getSpringContext() {
-        return springContext;
-    }
-
     @Override
-    public void init() throws Exception {
-        if (springContext == null) {
-            springContext = new SpringApplicationBuilder(ControlDelNegocioApplication.class)
-                    .web(WebApplicationType.NONE) // no arranca web server
-                    .run();
-        }
+    public void start(Stage stage) throws Exception {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/LoginView.fxml"));
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/LoginView.fxml")
+        );
         loader.setControllerFactory(springContext::getBean);
-        root = loader.load();
-    }
 
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Sistema de Login");
-        primaryStage.setScene(new Scene(root, 600, 400));
-        primaryStage.setResizable(false);
-        primaryStage.show();
+        Parent root = loader.load();
+
+        mainScene = new Scene(root);
+
+        mainScene.getStylesheets().addAll(
+                Objects.requireNonNull(getClass().getResource("/styles/theme.css")).toExternalForm(),
+                Objects.requireNonNull(getClass().getResource("/styles/buttons.css")).toExternalForm(),
+                Objects.requireNonNull(getClass().getResource("/styles/forms.css")).toExternalForm(),
+                Objects.requireNonNull(getClass().getResource("/styles/tables.css")).toExternalForm()
+        );
+
+        stage.setScene(mainScene);
+        stage.setTitle("Gestion de Ventas y Stock");
+        stage.setResizable(false);
+        stage.setMaximized(true);
+        stage.show();
     }
 
     @Override
     public void stop() {
-        // Cerrar Spring context al cerrar la app
-        if (springContext != null) springContext.close();
+        springContext.close();
     }
+
+    public static void setRoot(String fxml) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    ControlDelNegocioApplication.class.getResource("/" + fxml)
+            );
+            loader.setControllerFactory(springContext::getBean);
+
+            Parent root = loader.load();
+            mainScene.setRoot(root);
+
+        } catch (Exception e) {
+            throw new RuntimeException("No se pudo cargar " + fxml, e);
+        }
+    }
+
 }

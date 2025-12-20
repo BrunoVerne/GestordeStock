@@ -3,6 +3,7 @@ package Spring.FX.controllers;
 import Spring.FX.domain.Producto;
 import Spring.FX.domain.Usuario;
 import Spring.FX.domain.Venta;
+import Spring.FX.domain.VentaProducto;
 import Spring.FX.services.ProductoService;
 import Spring.FX.services.VentaService;
 import javafx.collections.FXCollections;
@@ -10,9 +11,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +26,7 @@ public class VentaDialogoController {
     @FXML
     private ComboBox<Producto> productoComboBox;
     @FXML
-    private ListView<Producto> productosListView;
+    private ListView<VentaProducto> productosListView;
     @FXML
     private Label totalLabel;
     @FXML
@@ -46,11 +49,17 @@ public class VentaDialogoController {
     private Usuario usuario;
     private Stage dialogStage;
 
-    private final ObservableList<Producto> productosSeleccionados = FXCollections.observableArrayList();
+    private final ObservableList<VentaProducto> productosSeleccionados =
+            FXCollections.observableArrayList();
     private final Map<Producto, Integer> cantidadesSeleccionadas = new HashMap<>();
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+
+        // Ahora sí cargar productos porque ya tengo el usuario
+        List<Producto> productos = productoService.findByUsuarioId(usuario.getId())
+                .orElse(Collections.emptyList());
+        productoComboBox.getItems().setAll(productos);
     }
 
     public void setDialogStage(Stage dialogStage) {
@@ -67,27 +76,44 @@ public class VentaDialogoController {
     }
 
     @FXML
-    private void initialize() {
-        configurarListView();
-        cargarProductos();
+    public void initialize() {
         configurarCantidadSpinner();
-    }
 
-    private void configurarListView() {
         productosListView.setItems(productosSeleccionados);
-        productosListView.setCellFactory(lv -> new ListCell<>() {
+
+        productosListView.setCellFactory(lv -> new ListCell<VentaProducto>() {
             @Override
-            protected void updateItem(Producto item, boolean empty) {
+            protected void updateItem(VentaProducto item, boolean empty) {
                 super.updateItem(item, empty);
+
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    int cantidad = cantidadesSeleccionadas.getOrDefault(item, 1);
-                    setText(item.getNombre() + " x" + cantidad + " - $" + (item.getPrecio() * cantidad));
+                    setText(
+                            item.getNombreProducto()
+                                    + "  x" + item.getCantidad()
+                                    + "  ($" + String.format("%.2f",
+                                    item.getPrecioUnitario() * item.getCantidad()) + ")"
+                    );
                 }
             }
         });
+
+        productoComboBox.setConverter(new StringConverter<Producto>() {
+            @Override
+            public String toString(Producto producto) {
+                if (producto == null) return "";
+                return producto.getNombre() + " - $" + producto.getPrecio();
+            }
+
+            @Override
+            public Producto fromString(String string) {
+                return null; // no se usa
+            }
+        });
     }
+
+
 
     private void configurarCantidadSpinner() {
         SpinnerValueFactory<Integer> valueFactory =
@@ -95,83 +121,64 @@ public class VentaDialogoController {
         cantidadSpinner.setValueFactory(valueFactory);
     }
 
-    private void cargarProductos() {
-        try {
-            List<Producto> productos = productoService.getAllProductos();
-            productoComboBox.setItems(FXCollections.observableArrayList(productos));
-        } catch (Exception e) {
-            mostrarError("Error al cargar productos: " + e.getMessage());
-        }
-    }
+
 
     @FXML
     private void agregarProducto() {
-        Producto producto = productoComboBox.getSelectionModel().getSelectedItem();
-        if (producto != null) {
-            int cantidad = cantidadSpinner.getValue();
-            cantidadesSeleccionadas.merge(producto, cantidad, Integer::sum);
-            if (!productosSeleccionados.contains(producto)) {
-                productosSeleccionados.add(producto);
-            }
-            productosListView.refresh();
-            actualizarTotal();
-        }
+
+        Producto producto = productoComboBox.getValue();
+        int cantidad = cantidadSpinner.getValue();
+
+        if (producto == null || cantidad <= 0) return;
+
+        VentaProducto vp = new VentaProducto();
+        vp.setProductoId(producto.getId());
+        vp.setNombreProducto(producto.getNombre());
+        vp.setPrecioUnitario(producto.getPrecio());
+        vp.setCantidad(cantidad);
+
+        productosSeleccionados.add(vp);
+        actualizarTotal();
     }
+
 
     @FXML
     private void removerProducto() {
-        Producto producto = productosListView.getSelectionModel().getSelectedItem();
-        if (producto != null) {
-            productosSeleccionados.remove(producto);
-            cantidadesSeleccionadas.remove(producto);
+        VentaProducto seleccionado =
+                productosListView.getSelectionModel().getSelectedItem();
+
+        if (seleccionado != null) {
+            productosSeleccionados.remove(seleccionado);
             actualizarTotal();
         }
     }
 
+
+
     private void actualizarTotal() {
-        double total = cantidadesSeleccionadas.entrySet().stream()
-                .mapToDouble(e -> e.getKey().getPrecio() * e.getValue())
-                .sum();
-        totalLabel.setText(String.format("Total: $%.2f", total));
+        double total = 0;
+
+        for (VentaProducto vp : productosSeleccionados) {
+            total += vp.getPrecioUnitario() * vp.getCantidad();
+        }
+
+        totalLabel.setText("Total: $" + total);
     }
+
 
     @FXML
     private void crearVenta() {
-        try {
-            if (productosSeleccionados.isEmpty()) {
-                mostrarError("Debe seleccionar al menos un producto");
-                return;
-            }
 
-            Venta venta = new Venta(usuario);
+        Venta venta = new Venta(usuario);
 
-            for (Producto producto : productosSeleccionados) {
-                int cantidadVendida = cantidadesSeleccionadas.get(producto);
-
-                // Agregar producto a la venta
-                venta.agregarProducto(producto, cantidadVendida);
-
-                // Actualizar stock
-                int nuevaCantidad = producto.getCantidad() - cantidadVendida;
-                if (nuevaCantidad < 0) {
-                    throw new RuntimeException("Cantidad insuficiente para: " + producto.getNombre());
-                }
-                producto.setCantidad(nuevaCantidad);
-                productoService.actualizarProducto(producto.getId(), producto);
-            }
-
-            ventaService.createVenta(venta);
-
-            // Limpiar
-            productosSeleccionados.clear();
-            cantidadesSeleccionadas.clear();
-            dialogStage.close();
-
-        } catch (Exception e) {
-            mostrarError("Error al crear venta: " + e.getMessage());
+        for (VentaProducto vp : productosSeleccionados) {
+            venta.getProductos().add(vp);
+            vp.setVenta(venta);
         }
-    }
 
+        ventaService.createVenta(venta);
+        dialogStage.close();
+    }
 
     @FXML
     private void cancelar() {

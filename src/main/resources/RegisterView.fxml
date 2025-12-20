@@ -6,18 +6,33 @@
 <VBox xmlns="http://javafx.com/javafx/8.0.171"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="Spring.FX.controllers.RegisterController"
-      spacing="10"
-      alignment="CENTER"
-      style="-fx-padding: 20;">
+      spacing="16"
+      alignment="CENTER">
 
-    <Label text="Registro" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+    <!-- Título -->
+    <Label text="Registro" styleClass="title"/>
 
-    <!-- Nuevo campo para el nombre -->
-    <TextField fx:id="nombreField" promptText="Nombre"/>
-    <TextField fx:id="emailField" promptText="Email"/>
-    <PasswordField fx:id="passwordField" promptText="Contraseña"/>
-    <PasswordField fx:id="confirmPasswordField" promptText="Confirmar Contraseña"/>
+    <!-- Formulario -->
+    <VBox spacing="10" maxWidth="280">
+        <TextField fx:id="nombreField" promptText="Nombre"/>
+        <TextField fx:id="emailField" promptText="Email"/>
+        <PasswordField fx:id="passwordField" promptText="Contraseña"/>
+        <PasswordField fx:id="confirmPasswordField" promptText="Confirmar contraseña"/>
+    </VBox>
 
-    <Button text="Registrarse" onAction="#handleRegister"/>
-    <Label fx:id="errorLabel" style="-fx-text-fill: red;"/>
+    <!-- Acción -->
+    <Button text="Registrarse"
+            onAction="#handleRegister"
+            styleClass="button-primary"/>
+
+
+
+    <Button text="Volver a Inicio"
+            onAction="#volverALogin"
+            styleClass="button-secondary"/>
+
+    <!-- Error -->
+    <Label fx:id="errorLabel" styleClass="error-label"/>
 </VBox>
+
+

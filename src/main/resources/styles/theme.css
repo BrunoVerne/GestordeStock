@@ -1,0 +1,174 @@
+.root, .login-root, .dashboard-root {
+-fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+-fx-font-size: 14px;
+-fx-text-fill: #222831;
+-fx-background-color: linear-gradient(to bottom right, #f7fafc, #eef2ff);
+}
+/* títulos */
+.title {
+    -fx-font-size: 50px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d3436;
+}
+
+/* subtítulos */
+.subtitle {
+    -fx-font-size: 30px;
+    -fx-text-fill: #636e72;
+}
+
+
+
+
+/* Card GRANDE */
+.login-card-large {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-padding: 70;
+    -fx-background-radius: 30;
+    -fx-min-width: 600;
+    -fx-max-width: 600;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(0, 0, 0, 0.25),
+        40,
+        0,
+        0,
+        10
+    );
+}
+
+/* Marca */
+.app-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #1e3a8a;
+    -fx-letter-spacing: 1px;
+}
+/* Título */
+.login-title {
+    -fx-font-size: 70px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #363636;
+}
+
+/* Inputs */
+.text-field,
+.password-field {
+    -fx-padding: 14 16;
+    -fx-font-size: 16px;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #cbd5e1;
+    -fx-background-color: #f9fafb;
+}
+
+.text-field:focused,
+.password-field:focused {
+    -fx-border-color: #2563eb;
+    -fx-background-color: white;
+}
+/* Botón */
+.login-button {
+    -fx-padding: 14 0;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+
+    -fx-background-color: linear-gradient(
+        to right,
+        #2563eb,
+        #1d4ed8
+    );
+
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.login-button:hover {
+    -fx-background-color: linear-gradient(
+        to right,
+        #1d4ed8,
+        #1e40af
+    );
+}
+
+/* Secundarios */
+.login-muted {
+    -fx-text-fill: #7a7a7a;
+    -fx-font-size: 13px;
+}
+
+
+
+
+.dashboard-container {
+    -fx-padding: 48;
+    -fx-max-width: 1400;
+}
+
+
+
+.dashboard-card {
+    -fx-background-color: #F0F8FF;
+    -fx-padding: 40;
+    -fx-background-radius: 20;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(0,0,0,0.18),
+        30,
+        0,
+        0,
+        8
+    );
+}
+
+
+.dashboard-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+}
+
+.dashboard-subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: #6b7280;
+}
+
+
+
+.dashboard-table {
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+}
+
+
+
+.table-view .column-header-background {
+    -fx-background-color: #2c3e50;
+}
+
+.table-view .column-header,
+.table-view .column-header .label {
+    -fx-text-fill: black;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell {
+    -fx-font-size: 20px;
+}
+
+
+
+
+.dashboard-message {
+    -fx-padding: 16;
+    -fx-font-size: 14px;
+    -fx-text-fill: #2563eb;
+}
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: black;
+}

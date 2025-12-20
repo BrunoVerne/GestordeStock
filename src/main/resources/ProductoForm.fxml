@@ -2,23 +2,34 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
 <DialogPane xmlns="http://javafx.com/javafx/8.0.171"
             xmlns:fx="http://javafx.com/fxml/1">
 
     <content>
-        <GridPane hgap="10" vgap="10">
+        <VBox spacing="16">
+
+            <!-- Título -->
 
 
-            <Label text="Nombre:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-            <TextField fx:id="nombreField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+            <!-- Formulario -->
+            <GridPane hgap="12" vgap="12">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="80"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
 
-            <Label text="Precio:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-            <TextField fx:id="precioField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <Label text="Nombre"/>
+                <TextField fx:id="nombreField" GridPane.columnIndex="1"/>
 
-            <Label text="Cantidad:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-            <TextField fx:id="cantidadField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-        </GridPane>
+                <Label text="Precio" GridPane.rowIndex="1"/>
+                <TextField fx:id="precioField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <Label text="Cantidad" GridPane.rowIndex="2"/>
+                <TextField fx:id="cantidadField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            </GridPane>
+
+        </VBox>
     </content>
+
 </DialogPane>

@@ -1,0 +1,29 @@
+.button {
+    -fx-background-radius: 8;
+    -fx-padding: 8 16;
+    -fx-font-weight: bold;
+}
+
+.button-primary {
+    -fx-background-color: #0984e3;
+    -fx-text-fill: white;
+}
+
+.button-primary:hover {
+    -fx-background-color: #74b9ff;
+}
+
+.button-danger {
+    -fx-background-color: #d63031;
+    -fx-text-fill: white;
+}
+
+.button-secondary {
+    -fx-background-color: #dfe6e9;
+    -fx-text-fill: #2d3436;
+}
+
+.button-secondary:hover {
+    -fx-background-color: #778899;
+}
+

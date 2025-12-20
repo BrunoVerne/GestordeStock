@@ -32,6 +32,13 @@ public class ProductoController {
 
     private Usuario usuario;
 
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+        cargarProductos();
+    }
+
+
     @FXML
     public void initialize() {
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -39,10 +46,7 @@ public class ProductoController {
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-        cargarProductos();
-    }
+
 
     private void cargarProductos() {
         try {
@@ -135,22 +139,30 @@ public class ProductoController {
         }
     }
 
-    // Método estático para abrir desde SalesController
-    public static void mostrarVentanaProductos(Usuario usuario) {
+
+    @FXML
+    private void volverAVentas() {
         try {
-            FXMLLoader loader = new FXMLLoader(ProductoController.class.getResource("/ProductoView.fxml"));
-            loader.setControllerFactory(ControlDelNegocioApplication.getSpringContext()::getBean);
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/VentasView.fxml")
+            );
+            loader.setControllerFactory(
+                    ControlDelNegocioApplication.getSpringContext()::getBean
+            );
+
             Parent root = loader.load();
 
-            ProductoController controller = loader.getController();
-            controller.setUsuario(usuario);
+            VentasController controller = loader.getController();
+            controller.setUsuario(usuario); // 👈 MISMO USUARIO
 
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Gestión de Stock");
-            stage.show();
+            Stage stage = (Stage) productosTable.getScene().getWindow();
+            stage.getScene().setRoot(root);
+
         } catch (Exception e) {
-            throw new RuntimeException("Error al abrir productos: " + e.getMessage());
+            throw new RuntimeException("Error al volver a ventas", e);
         }
     }
+
+
+
 }

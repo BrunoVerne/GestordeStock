@@ -32,19 +32,25 @@ public class VentaProductoServiceImplDB implements VentaProductoService {
         return ventaProductoRepository.findByVentaId(ventaId);
     }
 
-    @Override
-    public List<VentaProducto> getByProductoId(Integer productoId) {
-        return ventaProductoRepository.findByProductoId(productoId);
-    }
+
 
     @Override
     public VentaProducto update(Integer id, VentaProducto ventaProducto) {
-        return ventaProductoRepository.findById(id).map(existente -> {
-            existente.setVenta(ventaProducto.getVenta());
-            existente.setProducto(ventaProducto.getProducto());
-            existente.setCantidad(ventaProducto.getCantidad());
-            return ventaProductoRepository.save(existente);
-        }).orElseThrow(() -> new RuntimeException("VentaProducto no encontrado con id " + id));
+        return ventaProductoRepository.findById(id)
+                .map(existente -> {
+
+
+
+                    existente.setCantidad(ventaProducto.getCantidad());
+                    existente.setNombreProducto(ventaProducto.getNombreProducto());
+                    existente.setPrecioUnitario(ventaProducto.getPrecioUnitario());
+
+                    return ventaProductoRepository.save(existente);
+
+                })
+                .orElseThrow(() ->
+                        new RuntimeException("VentaProducto no encontrado con id " + id)
+                );
     }
 
     @Override

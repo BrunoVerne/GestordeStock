@@ -1,21 +1,26 @@
 package Spring.FX.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 
+@Getter
 @Entity
 @Table(name = "productos")
 public class Producto {
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Integer id;
     @Column(nullable = false)
-    private float precio;
+    private Float precio;
     @Column(nullable = false)
     private int cantidad;
     @Column(nullable = false)
     private String nombre;
+    @Setter
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false)
     private Usuario usuario;
@@ -54,34 +59,6 @@ public class Producto {
 
         }
         this.cantidad = cantidad;
-    }
-
-    public void setId(Integer codigo) {
-        this.id = codigo;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public Integer getId() {  // Cambiado de long a Integer
-        return id;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public float getPrecio() {
-        return precio;
-    }
-
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public String getNombre() {
-        return nombre;
     }
 
     @Override

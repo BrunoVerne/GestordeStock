@@ -11,5 +11,5 @@ public interface VentaProductoRepository extends JpaRepository<VentaProducto, In
 
     List<VentaProducto> findByVentaId(Integer ventaId);
 
-    List<VentaProducto> findByProductoId(Integer productoId);
+
 }

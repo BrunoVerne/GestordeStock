@@ -12,7 +12,6 @@ public interface VentaProductoService {
 
     List<VentaProducto> getByVentaId(Integer ventaId);
 
-    List<VentaProducto> getByProductoId(Integer productoId);
 
     VentaProducto update(Integer id, VentaProducto ventaProducto);
 

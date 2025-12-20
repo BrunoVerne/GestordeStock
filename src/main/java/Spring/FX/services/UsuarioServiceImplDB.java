@@ -46,7 +46,7 @@ public class UsuarioServiceImplDB implements UsuarioService{
     }
 
     @Override
-    public Boolean autenticar(String email, String password) throws Exception {
+    public Usuario autenticar(String email, String password) throws Exception {
         Usuario usuario = usuarioRepository.findByMail(email)
                 .orElseThrow(() -> new Exception("Credenciales inválidas"));
 
@@ -54,7 +54,7 @@ public class UsuarioServiceImplDB implements UsuarioService{
             throw new Exception("Credenciales inválidas");
         }
 
-        return true;
+        return usuario;
     }
 
     @Override

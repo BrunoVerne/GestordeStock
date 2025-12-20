@@ -5,6 +5,7 @@ import Spring.FX.domain.Usuario;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import lombok.Setter;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -15,22 +16,36 @@ public class ProductoDialogoController {
     @FXML private TextField cantidadField;
 
     private Producto producto;
+    /**
+     * -- SETTER --
+     * Asignar el usuario que creó/edita el producto
+     */
+    @Setter
     private Usuario usuario;
 
-    /** Inicializa el diálogo con un producto existente (editar) o nuevo (crear) */
     public void setProducto(Producto producto) {
         this.producto = producto;
 
         if (producto != null) {
-            nombreField.setText(producto.getNombre() != null ? producto.getNombre() : "");
-            precioField.setText(String.valueOf(producto.getPrecio()));
-            cantidadField.setText(String.valueOf(producto.getCantidad()));
-        }
-    }
+            nombreField.setText(
+                    producto.getNombre() != null ? producto.getNombre() : ""
+            );
 
-    /** Asignar el usuario que creó/edita el producto */
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+            precioField.setText(
+                    producto.getPrecio() != null
+                            ? producto.getPrecio().toString()
+                            : "0"
+            );
+
+            cantidadField.setText(
+                    String.valueOf(producto.getCantidad())
+            );
+        } else {
+            // Caso NUEVO producto
+            nombreField.setText("");
+            precioField.setText("0");
+            cantidadField.setText("0");
+        }
     }
 
     /**
@@ -88,7 +103,7 @@ public class ProductoDialogoController {
             errores.append("Cantidad inválida.\n");
         }
 
-        if (errores.length() > 0) {
+        if (!errores.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error de validación");
             alert.setHeaderText("Corrige los siguientes errores:");

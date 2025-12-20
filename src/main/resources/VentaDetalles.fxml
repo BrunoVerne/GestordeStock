@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="Spring.FX.controllers.VentaDetallesController"
+            styleClass="dashboard-root">
+
+    <center>
+        <VBox alignment="TOP_CENTER">
+
+            <!-- Contenedor general -->
+            <VBox styleClass="dashboard-container">
+
+                <!-- Card principal -->
+                <VBox styleClass="dashboard-card" spacing="24">
+
+                    <!-- Header -->
+                    <VBox spacing="10">
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <Label text="Detalle de Venta"
+                                   styleClass="dashboard-title"/>
+                            <Label fx:id="lblId"
+                                   styleClass="dashboard-subtitle"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Resumen -->
+                    <GridPane hgap="40" vgap="16">
+
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <VBox spacing="4">
+                            <Label text="Fecha"
+                                   styleClass="dashboard-subtitle"/>
+                            <Label fx:id="lblFecha"/>
+                        </VBox>
+
+                        <VBox spacing="4" GridPane.columnIndex="1">
+                            <Label text="Usuario"
+                                   styleClass="dashboard-subtitle"/>
+                            <Label fx:id="lblUsuario"/>
+                        </VBox>
+
+                        <VBox spacing="4" GridPane.rowIndex="1">
+                            <Label text="Total"
+                                   styleClass="dashboard-subtitle"/>
+                            <Label fx:id="lblTotal"
+                                   styleClass="dashboard-title"/>
+                        </VBox>
+
+                        <VBox spacing="4"
+                              GridPane.rowIndex="1"
+                              GridPane.columnIndex="1">
+                            <Label text="Productos"
+                                   styleClass="dashboard-subtitle"/>
+                            <Label fx:id="lblTotalProductos"/>
+                        </VBox>
+
+                    </GridPane>
+
+                    <Separator/>
+
+                    <!-- Tabla -->
+                    <Label text="Productos vendidos"
+                           styleClass="dashboard-subtitle"/>
+
+                    <TableView fx:id="tableProductos"
+                               VBox.vgrow="ALWAYS"
+                               styleClass="dashboard-table">
+
+                        <columns>
+                            <TableColumn fx:id="colProducto"
+                                         text="Producto"
+                                         prefWidth="300"/>
+                            <TableColumn fx:id="colCantidad"
+                                         text="Cantidad"
+                                         prefWidth="140"/>
+                            <TableColumn fx:id="colPrecioUnitario"
+                                         text="Precio Unitario"
+                                         prefWidth="200"/>
+                            <TableColumn fx:id="colSubtotal"
+                                         text="Subtotal"
+                                         prefWidth="200"/>
+                        </columns>
+                    </TableView>
+
+                    <!-- Acciones -->
+                    <HBox spacing="16" alignment="CENTER_RIGHT">
+                        <Button text="Cerrar"
+                                onAction="#handleCerrar"
+                                styleClass="button-secondary"/>
+                    </HBox>
+
+                </VBox>
+            </VBox>
+        </VBox>
+    </center>
+
+</BorderPane>

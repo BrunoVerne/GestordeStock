@@ -2,25 +2,33 @@ package Spring.FX.domain;
 
 import Spring.FX.validaciones.EmailValidator;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Entity
 @Table(name = "usuarios")
 public class Usuario {
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
+    @Setter
     @Column(nullable = false)
     private String nombre;
     @Column(unique =true, nullable = false)
     private String mail;
+    @Setter
     @Column(nullable = false)
     private String contrasenia;
+    @Setter
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Producto> productos = new ArrayList<>();
+    @Setter
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Venta> ventas = new ArrayList<>();
 
@@ -35,37 +43,9 @@ public class Usuario {
         setMail(mail);
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getMail() {
-        return mail;
-    }
-
     public void setMail(String mail) {
         EmailValidator.validarEmail(mail);
         this.mail = mail;
-    }
-
-    public String getContrasenia() {
-        return contrasenia;
-    }
-
-    public void setContrasenia(String contrasenia) {
-        this.contrasenia = contrasenia;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     @Override
@@ -77,19 +57,4 @@ public class Usuario {
                 '}';
     }
 
-    public List<Venta> getVentas() {
-        return ventas;
-    }
-
-    public void setVentas(List<Venta> ventas) {
-        this.ventas = ventas;
-    }
-
-    public List<Producto> getProductos() {
-        return productos;
-    }
-
-    public void setProductos(List<Producto> productos) {
-        this.productos = productos;
-    }
 }

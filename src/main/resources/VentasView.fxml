@@ -2,37 +2,73 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.171"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="Spring.FX.controllers.VentasController">
-
-    <top>
-        <HBox alignment="CENTER" style="-fx-padding: 10;">
-            <Label text="Gestión de Ventas" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-        </HBox>
-    </top>
+            fx:controller="Spring.FX.controllers.VentasController"
+            styleClass="dashboard-root">
 
     <center>
-        <VBox spacing="10" style="-fx-padding: 10;">
-            <TableView fx:id="ventasTable">
-                <columns>
-                    <TableColumn fx:id="colFecha" text="Fecha" prefWidth="150"/>
-                    <TableColumn fx:id="colMonto" text="Monto" prefWidth="100"/>
-                    <TableColumn fx:id="colCantidadProductos" text="Cant. Productos" prefWidth="120"/>
-                    <TableColumn fx:id="colUsuario" text="Usuario" prefWidth="150"/>
-                </columns>
-            </TableView>
+        <VBox alignment="TOP_CENTER">
 
-            <HBox spacing="10" alignment="CENTER">
-                <Button text="Nueva Venta" onAction="#nuevaVenta" style="-fx-font-weight: bold;"/>
-                <Button text="Gestionar Stock" onAction="#gestionarStock" style="-fx-font-weight: bold; -fx-text-fill: green;"/>
-            </HBox>
+            <!-- Contenedor general -->
+            <VBox styleClass="dashboard-container">
+
+                <!-- Card principal -->
+                <VBox styleClass="dashboard-card" spacing="24">
+
+                    <!-- Header -->
+                    <VBox spacing="10">
+                        <Label text="Ventas realizadas"
+                               styleClass="dashboard-title"/>
+
+                    </VBox>
+
+                    <!-- Tabla -->
+                    <TableView fx:id="ventasTable"
+                               VBox.vgrow="ALWAYS"
+                               styleClass="dashboard-table">
+                        <columns>
+                            <TableColumn fx:id="colFecha"
+                                         text="Fecha"
+                                         prefWidth="410"/>
+                            <TableColumn fx:id="colMonto"
+                                         text="Monto"
+                                         prefWidth="410"/>
+                            <TableColumn fx:id="colCantidadProductos"
+                                         text="Cantidad "
+                                         prefWidth="410"/>
+                        </columns>
+                    </TableView>
+
+                    <!-- Acciones -->
+                    <HBox spacing="16"
+                          alignment="CENTER_RIGHT">
+                        <Button text="Eliminar Venta"
+                                onAction="#eliminarVenta"
+                                style="-fx-font-weight: bold; -fx-text-fill: red;"/>
+
+
+                        <Button text="Nueva Venta"
+                                onAction="#nuevaVenta"
+                                styleClass="button-primary"/>
+                    </HBox>
+
+                    <HBox spacing="16"
+                        alignment="CENTER_LEFT">
+                        <Button text="Gestionar Stock"
+                                onAction="#gestionarStock"
+                                styleClass="button-secondary"/>
+                    </HBox>
+
+                </VBox>
+            </VBox>
         </VBox>
     </center>
 
     <bottom>
         <Label fx:id="mensajeLabel" style="-fx-text-fill: blue; -fx-padding: 10;"/>
     </bottom>
+
 </BorderPane>
+

@@ -6,18 +6,41 @@
 <VBox xmlns="http://javafx.com/javafx/8.0.171"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="Spring.FX.controllers.LoginController"
-      spacing="10" alignment="CENTER"
-      style="-fx-padding: 20;">
+      alignment="CENTER"
+      styleClass="login-root">
 
-    <Label text="Inicio de Sesión" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+    <!-- contenedor centrado real -->
+    <VBox alignment="CENTER">
 
-    <TextField fx:id="emailField" promptText="Email"/>
-    <PasswordField fx:id="passwordField" promptText="Contraseña"/>
+        <!-- card -->
+        <VBox styleClass="login-card-large" spacing="20">
 
-    <Button text="Ingresar" onAction="#handleLogin" defaultButton="true"/>
+            <Label text="Software Pymes" styleClass="app-title"/>
+            <Label text="Inicio de Sesión" styleClass="login-title"/>
 
-    <Label text="¿No tienes cuenta?"/>
-    <Button text="Registrarse" onAction="#handleRegister"/>
+            <VBox spacing="14">
+                <TextField fx:id="emailField"
+                           promptText="Email"/>
+                <PasswordField fx:id="passwordField"
+                               promptText="Contraseña"/>
+            </VBox>
 
-    <Label fx:id="errorLabel" style="-fx-text-fill: red;"/>
+
+            <Button text="Ingresar"
+                    onAction="#handleLogin"
+                    defaultButton="true"
+                    styleClass="button-primary login-button"/>
+
+            <VBox spacing="8" alignment="CENTER">
+                <Label text="¿No tienes cuenta?" styleClass="login-muted"/>
+                <Button text="Registrarse"
+                        onAction="#handleRegister"
+                        styleClass="button-link"/>
+            </VBox>
+
+            <Label fx:id="errorLabel" styleClass="error-label"/>
+
+        </VBox>
+
+    </VBox>
 </VBox>

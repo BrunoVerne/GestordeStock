@@ -36,7 +36,7 @@ public class ProductoServiceImplDB implements ProductoService{
 
 
     @Override
-    public Producto createProducto(Producto producto) {
+    public void createProducto(Producto producto) {
         // Verificar que el producto tenga usuario asociado
         if (producto.getUsuario() == null || producto.getUsuario().getId() == null) {
             throw new RuntimeException("El producto debe tener un usuario asociado válido");
@@ -52,11 +52,11 @@ public class ProductoServiceImplDB implements ProductoService{
 
         // Asegurar que sea una creación (no actualización)
         producto.setId(null);
-        return productoRepository.save(producto);
+        productoRepository.save(producto);
     }
 
     @Override
-    public Producto actualizarProducto(Integer id, Producto productoActualizado) {
+    public void actualizarProducto(Integer id, Producto productoActualizado) {
         Producto productoExistente = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductoNotFoundException("Producto no encontrado con ID: " + id));
         productoExistente.setNombre(productoActualizado.getNombre());
@@ -64,7 +64,7 @@ public class ProductoServiceImplDB implements ProductoService{
         productoExistente.setCantidad(productoActualizado.getCantidad());
 
 
-        return productoRepository.save(productoExistente);
+        productoRepository.save(productoExistente);
     }
 
     @Override
@@ -74,11 +74,10 @@ public class ProductoServiceImplDB implements ProductoService{
     }
 
     @Override
-    public Producto borrarProducto(Integer id){
+    public void borrarProducto(Integer id){
         Producto productoExistente = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductoNotFoundException("Producto no encontrado con ID: " + id));
         this.productoRepository.delete(productoExistente);
-        return productoExistente;
     }
 
     @Override
