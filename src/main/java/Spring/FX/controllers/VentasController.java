@@ -157,6 +157,14 @@ public class VentasController {
 
             Stage dialogStage = new Stage();
             dialogStage.setScene(new Scene(root));
+
+            dialogStage.setWidth(900);
+            dialogStage.setHeight(600);
+            dialogStage.setMinWidth(900);
+            dialogStage.setMinHeight(600);
+            dialogStage.centerOnScreen();
+
+
             dialogStage.initOwner(ventasTable.getScene().getWindow());
 
             controller.setDialogStage(dialogStage);
@@ -247,6 +255,14 @@ public class VentasController {
 
             Stage dialogStage = new Stage();
             dialogStage.setScene(new Scene(root));
+
+            dialogStage.setWidth(900);
+            dialogStage.setHeight(600);
+            dialogStage.setMinWidth(900);
+            dialogStage.setMinHeight(600);
+            dialogStage.centerOnScreen();
+
+
             dialogStage.initOwner(ventasTable.getScene().getWindow());
 
             controller.setDialogStage(dialogStage);

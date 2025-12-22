@@ -1,5 +1,7 @@
-°hacer que cuando se haga una venta se baje de stock las unidades seleccionadas de esa venta
-°poner mas lindo la fecha de venta en el formulario de ventas
-°no poner le nombre de usuario en el formulario de ventas
-°que la venta sea seleccionable para poder tocar y ver el detalle de la vente (productos monto etc)
-°que no haya columna de cantidad de productos, podria ser por ejemplo el medio de pago siendo medio de pago una interfaz
+
+1) al momento de crear una venta que se le saque al stock la cantidad correspondiente
+2) hacer una columna cliente (crear entidad servicio repositorio y todo, no es por ahora tan necesario)
+3) si sumo el producto A a la venta luego B y luego de vuelta A que nno haya dos rows de A sino una que sume ambas
+
+
+
